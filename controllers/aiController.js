@@ -24,6 +24,26 @@ const summarizeText = async (req, res) => {
   });
 };
 
+const chatWithAI = async (req, res) =>{
+  try {
+    const { messages } = req.body;
+    if (!messages) {
+      return;
+    }
+    const response = await client.chat.completions.create({
+      model: process.env.OPENAI_MODEL,
+      messages: messages
+    });
+    res.json({
+      reply: response.choices[0].message.content
+    });
+  }
+  catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+}
+
 const uppercaseText = (req, res) => {
   const { text } = req.body;
   res.json({ result: text.toUpperCase() });
@@ -35,4 +55,4 @@ const wordCount = (req, res) => {
   res.json({ count });
 };
 
-module.exports = { summarizeText, uppercaseText, wordCount };
+module.exports = { summarizeText, uppercaseText, wordCount, chatWithAI };
